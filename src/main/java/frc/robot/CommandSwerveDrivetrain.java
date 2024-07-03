@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
@@ -10,8 +11,11 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.Vision;
+import org.photonvision.EstimatedRobotPose;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem
@@ -53,4 +57,13 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
+
+    @Override
+    public void periodic() {
+        //Periodically update the robot odometry with vision measurements.
+        Vision vision = RobotContainer.vision;
+        Optional<EstimatedRobotPose> estimatedRobotPose = vision.getEstimatedGlobalPose(this.getState().Pose);
+        estimatedRobotPose.ifPresent(robotPose -> this.addVisionMeasurement(robotPose.estimatedPose.toPose2d(), Timer.getFPGATimestamp()));
+    }
+
 }
