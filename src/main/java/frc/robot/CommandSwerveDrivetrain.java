@@ -9,6 +9,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -62,7 +63,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     public void periodic() {
         //Periodically update the robot odometry with vision measurements.
         Vision vision = RobotContainer.vision;
-        Optional<EstimatedRobotPose> estimatedRobotPose = vision.getEstimatedGlobalPose(this.getState().Pose);
+        Optional<EstimatedRobotPose> estimatedRobotPose = vision.getEstimatedGlobalPose(new Pose3d(getState().Pose));
         estimatedRobotPose.ifPresent(robotPose -> this.addVisionMeasurement(robotPose.estimatedPose.toPose2d(), Timer.getFPGATimestamp()));
     }
 
